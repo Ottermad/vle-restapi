@@ -36,4 +36,7 @@ def create_app(config_name="default"):
     app.register_blueprint(permissions_blueprint)
     app.register_blueprint(school_blueprint)
 
+    from .lesson.views import lesson_blueprint
+    app.register_blueprint(lesson_blueprint)
+
     return app
