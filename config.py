@@ -11,13 +11,18 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', "this_needs_to_be_more_secure")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SERVICE_NAME = 'restapi'
+    NO_REGISTER = False  # Set to True to disable connecting to services service 
 
 
 class Development(Config):
     """Config used in development."""
 
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@db/{}'.format(DATABASE_NAME)
+    PG_PASSWORD = 'postgres'
+    PG_HOST = 'db'
+    PG_USER = 'postgres'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}/{}'.format(
+        PG_USER, PG_PASSWORD, PG_HOST, DATABASE_NAME)
 
 
 class Testing(Config):
@@ -28,8 +33,26 @@ class Testing(Config):
         basedir, 'testing-database.sqlite')
     PRESERVE_CONTEXT_ON_EXCEPTION = False
 
+
+class Migrations(Development):
+    """Used to run migrations on docker-compose."""
+
+    NO_REGISTER = True
+
+
+class Minikube(Config):
+    DEBUG = True
+    PG_PASSWORD = 'FIJOeo0MpP'
+    PG_HOST = 'killer-gibbon-postgresql'
+    PG_USER = 'postgres'
+    SQLALCHEMY_DATABASE_URI = "postgresql://{}:{}@{}/{}".format(
+        PG_USER, PG_PASSWORD, PG_HOST, DATABASE_NAME)
+
+
 config = {
     'development': Development,
     'testing': Testing,
+    'minikube': Minikube,
+    'migrations':  Migrations,
     'default': Development
 }
