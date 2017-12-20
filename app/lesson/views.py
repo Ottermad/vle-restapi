@@ -13,3 +13,10 @@ lesson_blueprint = Blueprint('lesson', __name__, url_prefix='/lessons')
 @jwt_required
 def subject_list_or_create_view():
     return forward_request_to_service(request, services.lesson, "/subject/subject")
+
+
+@lesson_blueprint.route('/subject/<id>', methods=['PUT', 'GET', 'DELETE'])
+@jwt_required
+def subject_detail_delete_update(id):
+    return forward_request_to_service(
+        request, services.lesson, "/subject/subject/{}".format(id))
