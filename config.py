@@ -42,7 +42,7 @@ class Migrations(Development):
 
 class Minikube(Config):
     DEBUG = True
-    PG_PASSWORD = 'FIJOeo0MpP'
+    PG_PASSWORD = os.environ.get('PG_PASSWORD', 'postgres')
     PG_HOST = 'killer-gibbon-postgresql'
     PG_USER = 'postgres'
     SQLALCHEMY_DATABASE_URI = "postgresql://{}:{}@{}/{}".format(
