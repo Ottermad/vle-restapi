@@ -1,10 +1,6 @@
 """Views file."""
-import requests
-
-from flask import Blueprint, jsonify, request
-from flask_jwt_extended import create_access_token, jwt_required
-
-from internal.exceptions import HTTPException, MissingKeyError, NoJSONError
+from flask import Blueprint, request
+from flask_jwt_extended import jwt_required
 
 from app.utils import forward_request_to_service
 from app import services
@@ -12,35 +8,46 @@ from app import services
 
 user_blueprint = Blueprint('user', __name__, url_prefix='/user')
 
-@user_blueprint.route("/auth", methods=("POST",))
-def create_token():
-    """Route to create a JWT token."""
-    json_data = request.get_json()
-    if json_data is None:
-        raise NoJSONError()
 
-    expected_keys = ["username", "password"]
-    for key in expected_keys:
-        if key not in json_data.keys():
-            raise MissingKeyError(key)
+@user_blueprint.route("/me")
+@jwt_required
+def me():
+    return forward_request_to_service(request, services.user, "/user/me")
 
-    username = json_data['email']
-    password = json_data['password']
 
-    # Check email and password
-    response = services.user.post(
-        'authenticate',
-        json={'username': username, 'password': password},
-        headers={'Content-Type': 'application/json'}
-    )
+@user_blueprint.route("/user", methods=["GET", "POST"])
+@jwt_required
+def user_list_or_create():
+    return forward_request_to_service(request, services.user, "/user/user")
 
-    if response.status_code != 200:
-        raise HTTPException(
-            response.status_code,
-            response.json()
-        )
 
-    user_id = response.json()['id']
-    token = {'access_token': create_access_token(identity=user_id), 'user_id': user_id}
+@user_blueprint.route("/user/<int:user_id>", methods=["PUT", "GET", "DELETE"])
+@jwt_required
+def user_update_or_delete(user_id):
+    return forward_request_to_service(
+        request, services.user, "/user/user/{}".format(user_id))
 
-    return jsonify(token)
+
+permissions_blueprint = Blueprint('permission', __name__, url_prefix='/permissions')
+
+
+@permissions_blueprint.route('/permission', methods=["POST", "GET"])
+@jwt_required
+def permission_listing_or_create_view():
+    return forward_request_to_service(
+        request, services.user, "/permissions/permission")
+
+
+@permissions_blueprint.route('/permission/grant', methods=["POST", "DELETE"])
+@jwt_required
+def grant_or_remove_permission_view():
+    return forward_request_to_service(
+        request, services.user, "/permissions/permission/grant")
+
+
+school_blueprint = Blueprint('school', __name__, url_prefix='/school')
+
+
+@school_blueprint.route("/signup", methods=("POST",))
+def signup():
+    return forward_request_to_service(request, services.user, "/school/signup")

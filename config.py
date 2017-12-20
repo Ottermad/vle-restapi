@@ -12,6 +12,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SERVICE_NAME = 'restapi'
     NO_REGISTER = False  # Set to True to disable connecting to services service 
+    JWT_HEADER_TYPE = 'JWT'
 
 
 class Development(Config):
