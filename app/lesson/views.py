@@ -20,3 +20,22 @@ def subject_list_or_create_view():
 def subject_detail_delete_update(id):
     return forward_request_to_service(
         request, services.lesson, "/subject/subject/{}".format(id))
+
+
+@lesson_blueprint.route('/lesson', methods=['POST', 'GET'])
+@jwt_required
+def lesson_list_or_create_view():
+    return forward_request_to_service(request, services.lesson, "/lessons/lesson")
+
+
+@lesson_blueprint.route('/lesson/<int:lesson_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required
+def lesson_detail_view(lesson_id):
+    return forward_request_to_service(request, services.lesson, "/lessons/lesson/{}".format(lesson_id))
+
+
+@lesson_blueprint.route('/lesson/taught')
+@jwt_required
+def lesson_taught():
+    return forward_request_to_service(
+        request, services.lesson, '/lessons/lesson/taught')
