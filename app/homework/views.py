@@ -52,3 +52,24 @@ def quiz_detail_or_submit(quiz_id):
 def quiz_submissions(submission_id):
     return forward_request_to_service(
         request, services.homework, '/quiz/submission/{}'.format(submission_id))
+
+
+@homework_blueprint.route('/essay', methods=("POST", "GET"))
+@jwt_required
+def essay_create():
+    return forward_request_to_service(
+        request, services.homework, '/essay/')
+
+
+@homework_blueprint.route('/essay/<int:essay_id>', methods=("POST", "GET"))
+@jwt_required
+def essay_detail_or_submit(essay_id):
+    return forward_request_to_service(
+        request, services.homework, '/essay/{}'.format(essay_id))
+
+
+@homework_blueprint.route('/essay/submission/<int:submission_id>')
+@jwt_required
+def essay_submissions(submission_id):
+    return forward_request_to_service(
+        request, services.homework, '/essay/submission/{}'.format(submission_id))
