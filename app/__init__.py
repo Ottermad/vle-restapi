@@ -39,4 +39,7 @@ def create_app(config_name="default"):
     from .lesson.views import lesson_blueprint
     app.register_blueprint(lesson_blueprint)
 
+    from .homework.views import homework_blueprint
+    app.register_blueprint(homework_blueprint)
+
     return app
