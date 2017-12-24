@@ -11,7 +11,9 @@ def forward_request_to_service(request, service, endpoint):
 
     current_identity = get_jwt_identity()
     if current_identity is not None:
-        headers['User-Id'] = str(current_identity)
+        headers['User-Id'] = str(current_identity['id'])
+        headers['School-Id'] = str(current_identity['school_id'])
+        headers['Permissions'] = ",".join([p['name'] for p in current_identity['permissions']])
 
     params = request.args
     resp = request_method(url, params=params, json=request.json,
