@@ -73,3 +73,17 @@ def essay_detail_or_submit(essay_id):
 def essay_submissions(submission_id):
     return forward_request_to_service(
         request, services.homework, '/essay/submission/{}'.format(submission_id))
+
+
+@homework_blueprint.route("/comment/<int:comment_id>", methods=("PUT", "DELETE", "GET"))
+@jwt_required
+def comment_detail(comment_id):
+    return forward_request_to_service(
+        request, services.homework, '/homework/comment/{}'.format(comment_id))
+
+
+@homework_blueprint.route("/comment", methods=("POST", "GET"))
+@jwt_required
+def comment_listing():
+    return forward_request_to_service(
+        request, services.homework, '/homework/comment')
